@@ -63,7 +63,8 @@ Xdata, ydata = Xdata[shuffle_index], ydata[shuffle_index]
 X, testX, Y, testY = train_test_split(Xdata, ydata, test_size=0.20, random_state=42)
 
 # PCA
-pca = PCA(n_components=nfeat )
+#pca = PCA(n_components=nfeat )
+pca = PCA(n_components=15 )
 pca.fit(X)
 X =  pca.transform(X)
 testX =  pca.transform(testX)
@@ -74,11 +75,12 @@ print(pca.explained_variance_ratio_)
 
 # to use tensorflow convolutional NN, we must convert to 4D arrays
 # note that 4*8 = 32. Any combination leading to 32 works. 8*4, 1*32 etc
-X = X.reshape([-1, 4, 8, 1])
-testX = testX.reshape([-1, 4, 8, 1])
+# NOTE: if you drop features in the PCA part, you MUST reshape accordingly
+X = X.reshape([-1, 3, 5, 1])
+testX = testX.reshape([-1, 3, 5, 1])
 
 # Building convolutional network
-network = input_data(shape=[None, 4, 8, 1], name='input')
+network = input_data(shape=[None, 3, 5, 1], name='input')
 network = conv_2d(network, 32, 3, activation='relu', regularizer="L2")
 network = max_pool_2d(network, 2)
 network = local_response_normalization(network)
