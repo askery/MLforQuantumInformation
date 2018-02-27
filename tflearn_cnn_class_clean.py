@@ -17,7 +17,7 @@ import tensorflow as tf
 tf.reset_default_graph()
 
 from sklearn.model_selection import train_test_split,cross_val_score,StratifiedKFold,cross_val_predict
-#from sklearn.metrics import accuracy_score,confusion_matrix, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score,confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.decomposition import PCA
 from tflearn.layers.core import input_data, dropout, fully_connected
 from tflearn.layers.conv import conv_2d, max_pool_2d
@@ -100,5 +100,12 @@ model = tflearn.DNN(network, tensorboard_verbose=0)
 model.fit({'input': X}, {'target': Y}, n_epoch=20,
            validation_set=({'input': testX}, {'target': testY}),
            snapshot_step=100, show_metric=True, run_id='convnet_mnist')
+
+# Measuring
+# print the result of the accurary score between preds and real target values
+preds = model.predict(testX)
+predsaux = [np.argmax(preds[i]) for i in range(len(preds))]
+testYaux = [np.argmax(testY[i]) for i in range(len(testY))] 
+print ('accuracy score: ', accuracy_score(testYaux, predsaux))
 
 print ('job duration in s: ', datetime.now() - start)
