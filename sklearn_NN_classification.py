@@ -19,7 +19,7 @@ from sklearn.neural_network import MLPClassifier
 
 # importing #################
 #####
-file1 = '/home/data/research/IIP/ML/colab/daniel/rawdata/d2_NPT.txt' # negative - N rows of 16 complex number comma separated
+file1 = '/home/data/research/IIP/ML/colab/daniel/rawdata/d2_NPT.txt' # negative - N rows of 16 (features) complex number comma separated
 file2 = '/home/data/research/IIP/ML/colab/daniel/rawdata/d2_PPT.txt' # positive - M rows of 16 complex number comma separated
 
 data = np.genfromtxt(file1,  delimiter=',',dtype=str)                # load positive
@@ -35,7 +35,7 @@ X = np.concatenate((data2.real, data2.imag), axis=1)                 # making a 
 Xout = np.concatenate((pdata2.real, pdata2.imag), axis=1)            # making a + bj -> a, b for negative data
 Xdata = np.concatenate((X, Xout), axis=0)                            # pasting Xout below X => length now (N + M, 32)
 
-nfeat = len(Xdata[0])                                                               # number of features
+nfeat = len(Xdata[0])                                                # number of features
 
 yneg = list ( np.ones(len(X)) )                                      # labelling 1 to negative data - length N  
 ypos = list ( np.zeros(len(Xout)) )                                  # labelling 0 to negative data - length M
@@ -47,7 +47,6 @@ Xdata, ydata = Xdata[shuffle_index], ydata[shuffle_index]
 
 # split Xdata and ydata in train and test sets
 Xtrain, Xtest, ytrain, ytest = train_test_split(Xdata, ydata, test_size=0.20, random_state=42)
-
 
 # PCA
 pca = PCA(n_components=32 )
@@ -69,12 +68,17 @@ print(pca.explained_variance_ratio_)
 #Xtest =  lin_pca.transform(Xtest)
 
 # MLP classifier
-#clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes = (400,), max_iter = 300, verbose = False, random_state=9)
-nlayers = 1    # number hidden of layers
-neurons = [25] # neurons per layer
+# play with layers structure here
+# ---
+nlayers = 5                                                         # number hidden of layers
+neurons = [400]                                                     # neurons per layer
+#neurons = neurons + neurons[:len(neurons)-1][::-1]
 #neurons = list (range(2,301))
-layers = tuple ( neurons*nlayers ) # structure of the NN 
-clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=9)
+layers = tuple ( neurons*nlayers )                                  # FINAL structure of the NN 
+# ---
+# useful notes about MLP hyperparameters 
+# solver : {‘lbfgs’, ‘sgd’, ‘adam’}
+clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=9)
 
 # fit model with trin data
 model = clf.fit(Xtrain, ytrain)
