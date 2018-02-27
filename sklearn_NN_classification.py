@@ -39,13 +39,8 @@ nfeat = len(Xdata[0])                                                           
 
 yneg = list ( np.ones(len(X)) )                                      # labelling 1 to negative data - length N  
 ypos = list ( np.zeros(len(Xout)) )                                  # labelling 0 to negative data - length M
-ydata = yneg + ypos                                                  # pasting ypos 'below' yneg    - length N + M
+ydata = np.array (yneg + ypos)                                       # pasting ypos 'below' yneg    - length N + M
                                                                        
-aux = np.zeros((len(ydata),2))                                       # this makes a Hot Enconder for the target values: 
-for i in range(len(ydata)):                                          # 0 -> [1 0]
-    aux[i][int(ydata[i])] = 1.                                       # 1 -> [0 1] (this is to adapt binary classification to 4D tensors)
-ydata = aux
-
 # shuffle the data
 shuffle_index = np.random.permutation(len(Xdata))
 Xdata, ydata = Xdata[shuffle_index], ydata[shuffle_index]
@@ -76,7 +71,7 @@ print(pca.explained_variance_ratio_)
 # MLP classifier
 #clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes = (400,), max_iter = 300, verbose = False, random_state=9)
 nlayers = 1    # number hidden of layers
-neurons = [400] # neurons per layer
+neurons = [25] # neurons per layer
 #neurons = list (range(2,301))
 layers = tuple ( neurons*nlayers ) # structure of the NN 
 clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=9)
