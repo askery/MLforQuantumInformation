@@ -71,14 +71,14 @@ print(pca.explained_variance_ratio_)
 # play with layers structure here
 # ---
 nlayers = 5                                                         # number hidden of layers
-neurons = [400]                                                     # neurons per layer
+neurons = [1000]                                                     # neurons per layer
 #neurons = neurons + neurons[:len(neurons)-1][::-1]
 #neurons = list (range(2,301))
 layers = tuple ( neurons*nlayers )                                  # FINAL structure of the NN 
 # ---
 # useful notes about MLP hyperparameters 
-# solver : {‘lbfgs’, ‘sgd’, ‘adam’}
-clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=9)
+# solver : {‘lbfgs’, ‘sgd’, ‘adam’} <> Generally: adam is the best, sgd is faster and lbfgs is too slow 
+clf = MLPClassifier(solver='adam', activation='relu', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=9)
 
 # fit model with trin data
 model = clf.fit(Xtrain, ytrain)
