@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split,cross_val_score,StratifiedK
 from sklearn.metrics import accuracy_score,confusion_matrix, precision_score, recall_score, f1_score
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
-
+from sklearn.preprocessing import StandardScaler
 
 # importing #################
 #####
@@ -48,9 +48,14 @@ Xdata, ydata = Xdata[shuffle_index], ydata[shuffle_index]
 # split Xdata and ydata in train and test sets
 Xtrain, Xtest, ytrain, ytest = train_test_split(Xdata, ydata, test_size=0.20, random_state=42)
 
+# Scaler
+scaler = StandardScaler()
+scaler.fit(Xtrain)
+scaler.fit(Xtest)
+
 # PCA
-pca = PCA(n_components=32 )
-#pca = PCA(n_components=nfeat )
+#pca = PCA(n_components=15 )
+pca = PCA(n_components=nfeat )
 pca.fit(Xtrain)
 Xtrain =  pca.transform(Xtrain)
 Xtest =  pca.transform(Xtest)
@@ -70,15 +75,16 @@ print(pca.explained_variance_ratio_)
 # MLP classifier
 # play with layers structure here
 # ---
-nlayers = 5                                                         # number hidden of layers
-neurons = [1000]                                                     # neurons per layer
+nlayers = 5                                                       # number hidden of layers
+neurons = [400]                                                     # neurons per layer
 #neurons = neurons + neurons[:len(neurons)-1][::-1]
 #neurons = list (range(2,301))
 layers = tuple ( neurons*nlayers )                                  # FINAL structure of the NN 
 # ---
 # useful notes about MLP hyperparameters 
-# solver : {‘lbfgs’, ‘sgd’, ‘adam’} <> Generally: adam is the best, sgd is faster and lbfgs is too slow 
-clf = MLPClassifier(solver='adam', activation='relu', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=9)
+# solver: {‘lbfgs’, ‘sgd’, ‘adam’} <> Generally: adam (default) is the best, sgd is faster and lbfgs is too slow 
+# activation: {‘identity’, ‘logistic’, ‘tanh’, ‘relu’}, default ‘relu’
+clf = MLPClassifier(solver='adam', activation='relu', alpha=1e-5, hidden_layer_sizes = layers, max_iter = 1000, verbose = False, random_state=42)
 
 # fit model with trin data
 model = clf.fit(Xtrain, ytrain)
